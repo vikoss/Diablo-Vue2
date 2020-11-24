@@ -9,7 +9,7 @@
 export default {
   name: 'Home',
   created() {
-    this.$store.dispatch('oauth/getToken', null, { root: true })
+    //this.$store.dispatch('oauth/getToken', null, { root: true })
   }
 }
 </script>

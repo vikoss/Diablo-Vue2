@@ -1,12 +1,33 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <h1>{{ isLoading }}</h1>
+    <LoadingLayout v-if="isLoading"/>
+    <MainLayout v-else/>
+    <h1 v-if="isLoading" class="font-diablo">loading</h1>
+    <h1 v-else>not loadig</h1>
   </div>
 </template>
+
+<script>
+import { mapState } from 'vuex'
+import LoadingLayout from './layouts/Loading'
+import MainLayout from './layouts/Main'
+
+export default {
+  name: 'App',
+  components: {
+    MainLayout,
+    LoadingLayout,
+  },
+  computed: {
+    ...mapState('loading', ['isLoading'])
+  },
+  created() {
+    this.$store.dispatch('oauth/getToken', null, { root: true })
+  }
+
+}
+</script>
 
 <style lang="scss">
 #app {
