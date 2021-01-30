@@ -4,9 +4,114 @@
     url('./../fonts/diablo_h.ttf') format('truetype');
     font-style: normal;
     font-weight: normal;
-
 }
 
 .font-diablo {
     font-family: 'DiabloHeavy', sans-serif;
+}
+
+// Sprite image 'Heroes faces'
+
+.hero-barbarian,
+.hero-witch-doctor,
+.hero-demon-hunter,
+.hero-wizard,
+.hero-monk,
+.hero-necromancer,
+.hero-crusader {
+  background-image: url('./../img/heroes-faces.png');
+  background-size: 203%;
+  width: 136px;
+  height: 106px;
+}
+
+.hero-barbarian {
+  &.male {
+    background-position: 0 0;
+  }
+
+  &.female {
+    background-position: 100% 0;
+  }
+}
+
+.hero-witch-doctor {
+  &.male {
+    background-position: 0 16.538462%;
+  }
+
+  &.female {
+    background-position: 100% 16.538462%;
+  }
+}
+
+// Small devices (576px and up)
+
+@media (min-width: 576px) {
+  .hero-barbarian,
+  .hero-witch-doctor,
+  .hero-demon-hunter,
+  .hero-wizard,
+  .hero-monk,
+  .hero-necromancer,
+  .hero-crusader {
+    background-size: 200%;
+    width: 100%;
+    height: 115px;
+  }
+}
+
+// Large devices (992px and up)
+
+@media (min-width: 992px) {
+  .hero-barbarian,
+  .hero-witch-doctor,
+  .hero-demon-hunter,
+  .hero-wizard,
+  .hero-monk,
+  .hero-necromancer,
+  .hero-crusader {
+    height: 143px;
+  }
+}
+
+// Extra large devices (1200px and up)
+
+@media (min-width: 1200px) {
+  .hero-barbarian,
+  .hero-witch-doctor,
+  .hero-demon-hunter,
+  .hero-wizard,
+  .hero-monk,
+  .hero-necromancer,
+  .hero-crusader {
+    height: 174px;
+  }
+}
+
+// Sprite image 'Acts'
+
+.act {
+  background-image: url('./../img/progress.png');
+  background-size: 500%;
+
+  &.act1 {
+    &.pending {
+      background-position: -1px 0;
+    }
+
+    &.done {
+      background-position: -1px 57px;
+    }
+  }
+
+  &.act2 {
+    &.pending {
+      background-position: -51px 0;
+    }
+
+    &.done {
+      background-position: -51px -56px;
+    }
+  }
 }

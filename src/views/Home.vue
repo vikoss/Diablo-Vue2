@@ -85,13 +85,14 @@ export default {
   methods: {
     onSubmit() {
       let { region, battleTag } = this.form
-      battleTag.replace('#', '-')
+      const profile = battleTag.replace('#', '-')
+      console.log(region, profile, 'params')
 
       this.$router.push({
         name: 'Profile',
         params: {
           region,
-          battleTag,
+          profile,
         }
       })
     }
