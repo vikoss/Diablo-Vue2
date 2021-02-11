@@ -5,6 +5,7 @@ import store from './store'
 import './plugins/bootstrap'
 import './plugins/fontAwesome'
 import './assets/css/main.scss'
+import './directives'
 
 Vue.config.productionTip = false
 

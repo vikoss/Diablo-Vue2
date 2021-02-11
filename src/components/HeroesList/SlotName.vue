@@ -1,5 +1,5 @@
 <template>
-  <div class="hero-ico d-flex align-items-center">
+  <div class="hero-ico d-flex align-items-center hover-cursor-pointer" v-on:click="goToHero(hero.id)">
     <span class="hero-image border" :class="heroClass"/>
     <span class="hero-name ml-2 font-weight-bold" :class="{ 'text-danger': hero.hardcore }">
       {{ hero.name }}
@@ -9,8 +9,11 @@
 </template>
 
 <script>
+import gotToHero from '@/mixins/goToHero'
+
 export default {
   props: [ 'hero' ],
+  mixins: [ gotToHero ],
   computed: {
     heroClass() {
       const gender = this.hero.gender === 1 ? 'female' : 'male'

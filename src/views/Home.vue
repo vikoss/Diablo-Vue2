@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="home-tite text-center">
-      <h1 class="my-5 font-diablo">Diablo 3 Profile Finder</h1>
+      <h1 v-diablo:bone.bottom class="my-5">Diablo 3 Profile Finder</h1>
       <p class="lead text-muted">
         Enter your
         <em>
@@ -23,6 +23,7 @@
               description="Format: YourProfile#1234"
             >
               <b-form-input
+                v-focus
                 id="input-text"
                 v-model="form.battleTag"
                 type="text"

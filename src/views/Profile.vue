@@ -5,34 +5,22 @@
     <div class="grid-container">
       <div class="grid-item item-left">
 
-        <div class="top-heroes">
-          <h2 class="my-4 font-diablo">Top Heroes</h2>
-          <b-row>
-            <b-col sm="4" v-for="hero in topHeroes" :key="hero.id">
-              <Hero :hero="hero"/>
-            </b-col>
-          </b-row>
-        </div>
-
-
-        <HeroesTable :heroes="heroesList"/>
-
-        <div class="progression-bosses pt-4 mt-5 border-top">
-          <h2 class="font-diablo mb-4">Progression</h2>
-          <b-row>
-            <b-col v-for="(val, key) in profileData.progression" :key="key" class="col-12 col-md-2">
-              <div class="bg-dark rounded mb-2">
-                <Progression :act="{actNum: key, value: val}"/>
-              </div>
-            </b-col>
-          </b-row>
-        </div>
+        <TopHeroes :topHeroes="topHeroes" />
+        <HeroesList :heroes="heroesList "/>
+        <Progression :progression="progressionData "/>
 
       </div>
       <div class="grid-item item-right">
-        <h1>Derecha</h1>
+
+        <div class="multi-stats pl-lg-4">
+          <hr class="bg-white mt-5 d-lg-none">
+          <Stats :kills="statsData.kills" :paragonLevel="statsData.paragonLevel" />
+          <TimePlayed :timePlayed="timePlayed" />
+        </div>
+
       </div>
     </div>
+    <Artisans :artisans="artisans" />
   </div>
 </template>
 
@@ -41,13 +29,17 @@ import setError from '@/mixins/setError'
 import { getApiAccount } from '@/services/search'
 import Spinner from '@/components/Spinner'
 import formatNumber from '@/filters/numeral'
-import Hero from '@/components/Hero'
-import HeroesTable from '@/components/HeroesTable'
-import Progression from '@/components/Progression'
+import TopHeroes from '@/components/TopHeroes/Index'
+import HeroesList from '@/components/HeroesList/Index'
+import Progression from '@/components/Progression/Index'
+import Stats from '@/components/Stats/Index'
+import TimePlayed from '@/components/TimePlayed/Index'
+import HeroData from '@/utils/typeHeroData'
+import Artisans from '@/components/Artisans/Index'
 
 export default {
   name: 'Profile',
-  components: { Spinner, Hero, HeroesTable, Progression },
+  components: { Spinner, TopHeroes, HeroesList, Progression, Stats, TimePlayed, Artisans },
   mixins: [ setError ],
   filters: { formatNumber },
   data() {
@@ -63,6 +55,7 @@ export default {
   methods: {
     fetchData() {
       const { region, profile: account } = this.$route.params
+      console.log(region , account)
 
       getApiAccount({region, account})
         .then(({data}) => {
@@ -99,9 +92,39 @@ export default {
     hasHeroesList() {
       return this.isNotNullHeroes ? this.profileData.heroes.length > 3 : false
     },
-    heroesList () {
+    heroesList() {
       return this.isNotNullHeroes ? this.profileData.heroes.slice(3, this.profileData.heroes.length) : []
-    }
+    },
+    statsData() {
+      const { paragonLevel, kills, timeplayed } = this.profileData
+      return { paragonLevel, kills, timeplayed }
+    },
+    progressionData() {
+      const { progression } = this.profileData
+      return progression
+    },
+    timePlayed() {
+      return Object.keys(this.profileData.timePlayed)
+        .sort()
+        .map(hero => {
+          return new HeroData(
+            hero,
+            this.profileData.timePlayed[hero],
+            hero,
+          )
+        })
+    },
+    artisans() {
+      return {
+        blacksmith: this.profileData.blacksmith,
+        blacksmithHardcore: this.profileData.blacksmithHardcore,
+        jeweler: this.profileData.jeweler,
+        jewelerHardcore: this.profileData.jewelerHardcore,
+        mystic: this.profileData.mystic,
+        mysticHardcore: this.profileData.mysticHardcore,
+
+      }
+    },
   }
 }
 </script>
