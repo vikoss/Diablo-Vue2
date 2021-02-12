@@ -12,7 +12,7 @@
           <small>
             <span>{{ detail.level }}</span>
             <span class="text-info">
-              <span class="text-white">.</span>
+              <span class="text-white"> . </span>
               ({{ detail.paragonLevel }})
             </span>
             <span>. {{ detail.classSlug }}</span>
@@ -20,7 +20,7 @@
             <span v-if="detail.hardcore" class="text-danger">. Hardcore</span>
           </small>
           <div>
-            <small class="text-muted">Season created:</small>
+            <small class="text-muted">Season created: </small>
             <BBadge>{{ detail.seasonCreated }}</BBadge>
           </div>
         </div>

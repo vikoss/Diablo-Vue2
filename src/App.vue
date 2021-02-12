@@ -1,10 +1,7 @@
 <template>
   <div id="app">
-    <h1>{{ isLoading }}</h1>
     <LoadingLayout v-if="isLoading"/>
     <MainLayout v-else/>
-    <h1 v-if="isLoading" class="font-diablo">loading</h1>
-    <h1 v-else>not loadig</h1>
   </div>
 </template>
 
@@ -12,20 +9,17 @@
 import { mapState } from 'vuex'
 import LoadingLayout from './layouts/Loading'
 import MainLayout from './layouts/Main'
+import store from '@/store'
 
 export default {
   name: 'App',
-  components: {
-    MainLayout,
-    LoadingLayout,
-  },
+  components: { MainLayout, LoadingLayout },
   computed: {
-    ...mapState('loading', ['isLoading'])
+    ...mapState('loading', ['isLoading']),
   },
   created() {
-    this.$store.dispatch('oauth/getToken', null, { root: true })
-  }
-
+    store.dispatch('oauth/getToken')
+  },
 }
 </script>
 

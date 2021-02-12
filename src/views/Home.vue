@@ -70,24 +70,23 @@ export default {
         battleTag: '',
         region: 'eu',
       },
-      regionsArray: [
-        'us',
-        'eu',
-        'kr',
-        'tw',
-      ],
     }
   },
   computed: {
     regions() {
-      return this.regionsArray.map(region => ({value: region, text: region.toUpperCase()}))
+      const regions = [
+        'us',
+        'eu',
+        'kr',
+        'tw',
+      ]
+      return regions.map(region => ({ value: region, text: region.toUpperCase() }))
     }
   },
   methods: {
     onSubmit() {
-      let { region, battleTag } = this.form
+      const { region, battleTag } = this.form
       const profile = battleTag.replace('#', '-')
-      console.log(region, profile, 'params')
 
       this.$router.push({
         name: 'Profile',
@@ -96,7 +95,7 @@ export default {
           profile,
         }
       })
-    }
+    },
   }
 }
 </script>

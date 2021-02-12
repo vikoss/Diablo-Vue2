@@ -1,32 +1,31 @@
 <template>
   <div>
-    <h1>Profile View</h1>
     <Spinner v-if="isLoading"/>
-    <div class="grid-container">
+    <div v-else class="grid-container">
       <div class="grid-item item-left">
 
         <TopHeroes :topHeroes="topHeroes" />
         <HeroesList :heroes="heroesList "/>
-        <Progression :progression="progressionData "/>
+        <Progression :progression="progression "/>
 
       </div>
       <div class="grid-item item-right">
 
         <div class="multi-stats pl-lg-4">
           <hr class="bg-white mt-5 d-lg-none">
-          <Stats :kills="statsData.kills" :paragonLevel="statsData.paragonLevel" />
+          <Stats :kills="kills" :paragonLevel="paragonLevel" />
           <TimePlayed :timePlayed="timePlayed" />
         </div>
 
       </div>
     </div>
-    <Artisans :artisans="artisans" />
+    <Artisans v-if="profile" :artisans="artisans" />
   </div>
 </template>
 
 <script>
 import setError from '@/mixins/setError'
-import { getApiAccount } from '@/services/search'
+import { getApiAccount } from '@/api/profile'
 import Spinner from '@/components/Spinner'
 import formatNumber from '@/filters/numeral'
 import TopHeroes from '@/components/TopHeroes/Index'
@@ -45,83 +44,71 @@ export default {
   data() {
     return {
       isLoading: false,
-      profileData: null,
+      profile: null,
     }
   },
   created() {
-    this.isLoading = true
     this.fetchData()
   },
   methods: {
-    fetchData() {
+    async fetchData() {
       const { region, profile: account } = this.$route.params
-      console.log(region , account)
-
-      getApiAccount({region, account})
-        .then(({data}) => {
-          this.profileData = data
-          console.log(data)
-        })
-        .catch(error => {
-          console.log(error)
-          const errorObj = {
-            routeParams: this.$route.params,
-            message: error.message
-          }
-          if (error.response) {
-            errorObj.data = error.response.data
-            errorObj.status = error.response.status
-          }
-          console.log(errorObj)
-          this.setApiError()
-          this.$router.push({name: 'Error'})
-        })
-        .finally(() => this.isLoading = false)
+      this.isLoading = true
+      try {
+        const { data } = await getApiAccount({ region, account })
+        this.profile = data
+      } catch (error) {
+        console.error(error)
+        const errorObj = {
+          routeParams: this.$route.params,
+          message: error.message
+        }
+        if (error.response) {
+          errorObj.data = error.response.data
+          errorObj.status = error.response.status
+        }
+        console.log(errorObj)
+        this.setApiError(errorObj)
+        this.$router.push({name: 'Error'})
+      }
+      this.isLoading = false
     },
   },
   computed: {
-    isNotNullHeroes() {
-      return !!this.profileData
-    },
-    hasHeroes() {
-      return this.isNotNullHeroes ? this.profileData.heroes.length > 0 : false
-    },
     topHeroes() {
-      return this.isNotNullHeroes ? this.profileData.heroes.slice(0, 3) : []
-    },
-    hasHeroesList() {
-      return this.isNotNullHeroes ? this.profileData.heroes.length > 3 : false
+      return this.profile.heroes.slice(0, 3)
     },
     heroesList() {
-      return this.isNotNullHeroes ? this.profileData.heroes.slice(3, this.profileData.heroes.length) : []
+      return this.profile.heroes.slice(3, this.profile.heroes.length)
     },
-    statsData() {
-      const { paragonLevel, kills, timeplayed } = this.profileData
-      return { paragonLevel, kills, timeplayed }
+    kills() {
+      return this.profile.kills
     },
-    progressionData() {
-      const { progression } = this.profileData
-      return progression
+    paragonLevel() {
+      return this.profile.paragonLevel
+    },
+    progression() {
+      return this.profile.progression
     },
     timePlayed() {
-      return Object.keys(this.profileData.timePlayed)
+      return Object.keys(this.profile.timePlayed)
         .sort()
         .map(hero => {
           return new HeroData(
             hero,
-            this.profileData.timePlayed[hero],
+            this.profile.timePlayed[hero],
             hero,
           )
         })
     },
     artisans() {
       return {
-        blacksmith: this.profileData.blacksmith,
-        blacksmithHardcore: this.profileData.blacksmithHardcore,
-        jeweler: this.profileData.jeweler,
-        jewelerHardcore: this.profileData.jewelerHardcore,
-        mystic: this.profileData.mystic,
-        mysticHardcore: this.profileData.mysticHardcore,
+        blacksmith: this.profile.blacksmith,
+        blacksmithHardcore: this.profile.blacksmithHardcore,
+        jeweler: this.profile.jeweler,
+        jewelerHardcore: this.profile.jewelerHardcore,
+        mystic: this.profile.mystic,
+        mysticHardcore: this.profile.mysticHardcore,
 
       }
     },

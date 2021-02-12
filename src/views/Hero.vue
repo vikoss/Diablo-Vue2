@@ -1,24 +1,24 @@
 <template>
   <div class="hero-view">
-    <Spinner v-if="isLoadingHero" />
-    <HeroDetailHeader v-if="hero" :detail="detailHeader" />
+    <Spinner v-if="isLoading" />
 
-    <BRow>
-      <BCol md="12" lg="8" order-lg="2">
-        <Spinner v-if="isLoadingItems"></Spinner>
-      </BCol>
+    <template v-else>
+      <HeroDetailHeader :detail="detailHeader" />
 
-      <BCol>
+      <BRow>
+        <BCol>
           <HeroSkills v-if="hero" :skills="hero.skills"></HeroSkills>
-      </BCol>
-    </BRow>
+        </BCol>
+      </BRow>
+    </template>
+
   </div>
 </template>
 
 <script>
 import setError from '@/mixins/setError'
 import Spinner from '@/components/Spinner'
-import { getApiHero, getApiDetailedHeroItems } from '@/services/search'
+import { getApiHero, getApiDetailedHeroItems } from '@/api/profile'
 import HeroDetailHeader from '@/components/Hero/HeroDetailHeader'
 import HeroSkills from '@/components/Hero/HeroSkills'
 
@@ -28,8 +28,7 @@ export default {
   components: { Spinner, HeroDetailHeader, HeroSkills },
   data() {
     return {
-      isLoadingHero: false,
-      isLoadingItems: false,
+      isLoading: false,
       hero: null,
       items: null,
     }
@@ -62,23 +61,32 @@ export default {
     },
   },
   created() {
-    this.isLoadingHero = true
-    this.isLoadingItems = true
+    this.isLoading = true
     const { region, profile: account, hero: heroid } = this.$route.params
 
-    getApiHero({ region, account, heroid })
-    .then(({ data }) => {
-      this.hero = data
+    Promise.all([
+      getApiHero({ region, account, heroid }),
+      getApiDetailedHeroItems({ region, account, heroid }),
+    ])
+    .then(([{ data:hero }, { data,items }]) => {
+      this.hero = hero
+      this.items = items
     })
-    .catch(error => console.log(error))
-    .finally(() => this.isLoadingHero = false)
+    .catch(error => {
+      const errObj = {
+        routeParams: this.$route.params,
+        message: error.message
+      }
 
-    getApiDetailedHeroItems({ region, account, heroid })
-    .then(({ data }) => {
-      this.items = data
+      if (error.response) {
+        errObj.data = error.response.data
+        errObj.status = error.response.status
+      }
+
+      this.setApiErr(errObj)
+      this.$router.push({ name: 'Error' })
     })
-    .catch(error => console.log(error))
-    .finally(() => this.isLoadingItems = false)
+    .finally(() => this.isLoading = false)
   },
 }
 </script>

@@ -1,9 +1,9 @@
 <template>
-  <div class="skills-wrapper mt-5">
+  <div class="skills-wrapper d-flex flex-column align-items-center">
     <h2 class="font-diablo">Skills</h2>
     <hr class="bg-white">
 
-    <BNav pills small>
+    <BNav pills>
       <BNavItem :active="!isPassiveSkillsActive" v-on:click="changeComponent('ActiveSkills')">Active</BNavItem>
       <BNavItem :active="isPassiveSkillsActive" v-on:click="changeComponent('PassiveSkills')">Passive</BNavItem>
     </BNav>
@@ -42,7 +42,3 @@ export default {
   },
 }
 </script>
-
-<style>
-
-</style>

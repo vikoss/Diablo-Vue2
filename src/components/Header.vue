@@ -30,20 +30,34 @@
 </template>
 
 <script>
+import listSeasons from '@/api/season'
 
 export default {
   name: 'Header',
   data() {
     return {
         items: [],
-        title: 'Titleee',
-        currentSeason: 22
+        title: process.env.VUE_APP_TITLE,
+        currentSeason: null
     }
   },
   computed: {
     showComponent() {
       return this.$route.meta.showBreadcrumb
-    }
-  }
+    },
+  },
+  created() {
+    this.fetchSeasons()
+  },
+  methods: {
+    async fetchSeasons() {
+      try {
+        const { data } = await listSeasons('eu')
+        this.currentSeason = data.current_season
+      } catch (error) {
+        console.error(error)
+      }
+    },
+  },
 }
 </script>
